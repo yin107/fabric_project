@@ -1,0 +1,69 @@
+<template>
+  <div>
+  
+ <ButtonGroup size="small">
+<Button @click="group"
+:disabled="!(selecMode==='multiple')"
+>
+	<svg t="1668755172745" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="28089" width="15" height="15"><path d="M341.333333 341.333333 341.333333 512 554.666667 512 554.666667 341.333333 341.333333 341.333333M42.666667 42.666667 213.333333 42.666667 213.333333 85.333333 810.666667 85.333333 810.666667 42.666667 981.333333 42.666667 981.333333 213.333333 938.666667 213.333333 938.666667 810.666667 981.333333 810.666667 981.333333 981.333333 810.666667 981.333333 810.666667 938.666667 213.333333 938.666667 213.333333 981.333333 42.666667 981.333333 42.666667 810.666667 85.333333 810.666667 85.333333 213.333333 42.666667 213.333333 42.666667 42.666667M213.333333 810.666667 213.333333 853.333333 810.666667 853.333333 810.666667 810.666667 853.333333 810.666667 853.333333 213.333333 810.666667 213.333333 810.666667 170.666667 213.333333 170.666667 213.333333 213.333333 170.666667 213.333333 170.666667 810.666667 213.333333 810.666667M256 256 640 256 640 426.666667 768 426.666667 768 768 341.333333 768 341.333333 597.333333 256 597.333333 256 256M640 597.333333 426.666667 597.333333 426.666667 682.666667 682.666667 682.666667 682.666667 512 640 512 640 597.333333Z" p-id="28090" fill="#515151"></path></svg>
+</Button>
+<Button @click="ungroup"
+:disabled="!(selecMode==='one')"
+><svg t="1668755286383" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="33509" width="15" height="15"><path d="M85.333333 85.333333h170.666667v42.666667h298.666667V85.333333h170.666666v170.666667h-42.666666v128h85.333333V341.333333h170.666667v170.666667h-42.666667v256h42.666667v170.666667h-170.666667v-42.666667h-256v42.666667H341.333333v-170.666667h42.666667v-85.333333H256v42.666666H85.333333v-170.666666h42.666667V256H85.333333V85.333333m682.666667 426.666667v-42.666667h-85.333333v85.333334h42.666666v170.666666h-170.666666v-42.666666h-85.333334v85.333333h42.666667v42.666667h256v-42.666667h42.666667v-256h-42.666667m-213.333333-256V213.333333H256v42.666667H213.333333v298.666667h42.666667v42.666666h128v-85.333333H341.333333V341.333333h170.666667v42.666667h85.333333V256h-42.666666m-42.666667 256h-42.666667v85.333333h85.333334v-42.666666h42.666666v-85.333334h-85.333333v42.666667z" fill="#515151" p-id="33510"></path></svg></Button>
+
+ </ButtonGroup>
+ 
+ </div>
+</template>
+
+<script>
+import { mixins } from "@/mixin/index";
+
+export default {
+name:'GroupTool',
+mixins: [mixins],
+methods:{
+	// 组合元素
+	group(){
+
+const activeObject=this.canvas.c.getActiveObject()
+if(!activeObject) return 
+if(activeObject.type!=='activeSelection'){
+	return 
+}
+if(activeObject.type=='activeSelection'){
+	activeObject.toGroup()
+this.canvas.c.requestRenderAll()
+}
+	},
+	// 取消组合
+	ungroup(){
+		const activeObject=this.canvas.c.getActiveObject()
+if(!activeObject) return 
+if(activeObject.type!=='group'){
+	return 
+}
+if(activeObject.type=='group' && activeObject.name!=='svg元素'){
+	activeObject.toActiveSelection()
+	this.canvas.c.discardActiveObject()
+this.canvas.c.requestRenderAll()
+}
+	},
+	//对svg元素进行完全的解组
+	multiitem(){
+		const activeObject=this.canvas.c.getActiveObject()
+		if(activeObject.name=='svg元素'){
+			//获取选中的元素，进行组合拆分，取消画布的选中元素，重新渲染
+			this.canvas.c.getActiveObject().toActiveSelection()
+      this.canvas.c.discardActiveObject().renderAll();
+		}
+	
+	}
+}
+
+}
+</script>
+
+<style>
+
+</style>
